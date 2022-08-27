@@ -343,7 +343,7 @@ char *nvram_get(const char *key) {
 // We attempt to fix this directly in assembly for MIPS if the key is NULL.
 #if defined(mips)
   if (!key) {
-    asm("move %0, $a1" : "=r"(key));
+    asm("move $a1, %0" : "=r"(key));
   }
 #endif
 
@@ -510,6 +510,7 @@ int nvram_getall(char *buf, size_t len) {
 
 int nvram_set(const char *key, const char *val) {
   char path[PATH_MAX] = MOUNT_POINT;
+  char *n_path;
   FILE *f;
 
   if (!key || !val) {
@@ -522,6 +523,15 @@ int nvram_set(const char *key, const char *val) {
   strncat(path, key, ARRAY_SIZE(path) - ARRAY_SIZE(MOUNT_POINT) - 1);
 
   sem_lock();
+
+  /* create dirname. Fix: https://github.com/liyansong2018/firmware-analysis-plus/issues/32 */
+  n_path = strdup(path);
+  dirname(n_path);
+  if (!opendir(n_path)) {
+    char cmd[PATH_MAX];
+    sprintf(cmd, "mkdir -p %s", n_path);
+    system(cmd);
+  }
 
   if ((f = fopen(path, "wb")) == NULL) {
     sem_unlock();
@@ -700,5 +710,8 @@ int nvram_commit(void) {
   return E_SUCCESS;
 }
 
-// Hack to use static variables in shared library
+/* Hack to use static variables in shared library */
 #include "alias.c"
+
+/* Hack router's library */
+// #include "netgear/r6700v3.c"

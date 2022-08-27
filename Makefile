@@ -1,3 +1,4 @@
+CC=/usr/bin/gcc
 CFLAGS=-O2 -fPIC -Wall
 LDFLAGS=-shared -nostdlib
 

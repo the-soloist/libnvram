@@ -232,6 +232,7 @@ int envram_get(const char *key, char *buf) {
   return !nvram_get_buf(key, buf, USER_BUFFER_SIZE);
 }
 int envram_get_func(const char *key, char *buf) __attribute__((alias("envram_get")));
+
 int envram_getf(const char *key, const char *fmt, ...) {
   va_list va;
   char *val = nvram_get(key);

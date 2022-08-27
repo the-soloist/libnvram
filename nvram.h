@@ -1,6 +1,8 @@
 #ifndef INCLUDE_NVRAM_H
 #define INCLUDE_NVRAM_H
 
+#include <stddef.h>
+
 // Gets the ID of the semaphore. If uninitialized, will initialize both the semaphore and NVRAM.
 static int sem_get();
 // Locks the binary semaphore. Will block.
